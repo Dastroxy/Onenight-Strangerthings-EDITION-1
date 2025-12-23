@@ -699,8 +699,8 @@ if (villain) {
   utter.pitch = 1.0;  // normal human tone
   utter.rate  = 1.0;
 }
-    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 0.4;
-    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 0.5;
+    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 1.0;
+    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 1.0;
 
     utter.volume = 1;
     utter.lang   = "en-US";
