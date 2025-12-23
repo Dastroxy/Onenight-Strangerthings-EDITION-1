@@ -385,6 +385,10 @@ body {
 <main class="container">
 <section id="setup">
   <h2>Setup</h2>
+  <label>
+  <input type="checkbox" id="villainMode">
+  Vecna Mode (deeper villain voice)
+</label>
  <label>Number of Players:</label>
 <div id="playerBoxes" class="player-boxes"></div>
 <input id="playerCount" type="hidden" value="6">
@@ -677,6 +681,15 @@ utter.voice = chosen;
     // 🔧 read live slider values
     const pitchControl = document.getElementById("pitch");
     const rateControl  = document.getElementById("rate");
+    const villain = document.getElementById("villainMode")?.checked;
+
+if (villain) {
+  utter.pitch = 0.4;  // lower pitch
+  utter.rate  = 0.7;  // slower
+} else {
+  utter.pitch = 1.0;  // normal human tone
+  utter.rate  = 1.0;
+}
     utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 0.4;
     utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 0.5;
 
