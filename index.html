@@ -424,7 +424,7 @@ body {
 </main>
 
 <footer class="container">
-<small>© 2025 Stranger Things Fan Host • Local Edition</small>
+  <small>© 2025 <strong>Dastroxy’s Stranger Things - “V” Edition</strong></small>
 </footer>
 
 <script>
@@ -662,8 +662,8 @@ utter.voice = chosen;
     // 🔧 read live slider values
     const pitchControl = document.getElementById("pitch");
     const rateControl  = document.getElementById("rate");
-    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 0.4;
-    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 0.5;
+    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 1.0;
+    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 1.0;
 
     utter.volume = 1;
     utter.lang   = "en-US";
