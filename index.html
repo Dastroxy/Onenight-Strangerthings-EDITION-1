@@ -409,17 +409,21 @@ body {
 
   <!-- GAME SECTION -->
   <section id="game" style="display:none;">
-    <h2>Night Phase</h2>
-    <p id="subtitle">Narrator is preparing...</p>
+  <h2>Night Phase</h2>
+  <p id="subtitle">Narrator is preparing...</p>
 
-    <div id="voiceControls">
-      <h3>Voice Settings</h3>
-      <label for="villainModeGame">
-        <input type="checkbox" id="villainModeGame">
-        Vecna Mode (deep voice)
-      </label>
-    </div>
-  </section>
+  <div id="voiceControls">
+    <h3>Voice Settings</h3>
+    <label for="villainModeGame">
+      <input type="checkbox" id="villainModeGame">
+      Vecna Mode (deep voice)
+    </label>
+  </div>
+
+  <div id="controls">
+    <button id="backBtn" onclick="backToSetup()">Back to Setup</button>
+  </div>
+</section>
 
 </main>
 
@@ -442,17 +446,20 @@ body {
 
 <section id="game" style="display:none;">
   <h2>Night Phase</h2>
-  <p id="subtitle">Press Start to begin narration.</p>
-<p id="timer" style="font-size:1.5rem;color:#ff4444;"></p>
-  <ol id="phaseList"></ol>
+  <p id="subtitle">Narrator is preparing...</p>
+
+  <div id="voiceControls"> ... </div>
+
   <div id="controls">
     <button id="backBtn" onclick="backToSetup()">Back to Setup</button>
   </div>
+
+  <p id="timer">Discussion Time: 5:00</p>
 </section>
 </main>
 
 <footer class="container">
-<small>© 2025 Stranger Things Fan Host • Local Edition</small>
+<small>© 2025 DASTROXY'S Stranger Things Fan Host • "V" Edition</small>
 </footer>
   
 <script>
@@ -652,6 +659,7 @@ const phases = [
     "Everyone... wake up.",
     "The night is over.  Discuss what you saw and prepare to vote."
   ]}
+  startDiscussionTimer();
 ];
 
 let voices=[];
@@ -745,7 +753,14 @@ function playChime() {
   }
 }
 
-// 5-minute discussion timer
+function backToSetup() {
+  document.getElementById("game").style.display = "none";
+  document.getElementById("setup").style.display = "block";
+  // Optional: reset subtitle or any narration state
+  document.getElementById("subtitle").textContent = "Narrator is preparing...";
+}
+
+// === 5-minute discussion timer ===
 function startDiscussionTimer() {
   const timerEl = document.getElementById("timer");
   let totalSeconds = 5 * 60; // 5 minutes
@@ -753,20 +768,22 @@ function startDiscussionTimer() {
   function updateTimer() {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
-    timerEl.textContent = `Discussion Time: ${mins}:${secs.toString().padStart(2,'0')}`;
+    timerEl.textContent = `Discussion Time: ${mins}:${secs
+      .toString()
+      .padStart(2, "0")}`;
+
     if (totalSeconds > 0) {
       totalSeconds--;
       setTimeout(updateTimer, 1000);
     } else {
       timerEl.textContent = "🕒 Time's up! Prepare to vote.";
-      // optional chime when time ends
-      playChime && playChime();
+      // Optional: play a sound when the timer ends
+      if (typeof playChime === "function") playChime();
     }
   }
 
   updateTimer();
 }
-
 async function runNarration(){
   const list = document.getElementById("phaseList");
   list.innerHTML = "";
