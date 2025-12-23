@@ -483,37 +483,44 @@ document.addEventListener("DOMContentLoaded",()=>{
     if(hint) hint.innerHTML = `Select <strong>${n + 3}</strong> roles for this game.`;
   });
 });
+  
 // === PLAYER COUNT BOXES SETUP ===
 document.addEventListener("DOMContentLoaded", () => {
   const playerContainer = document.getElementById("playerBoxes");
   const playerInput = document.getElementById("playerCount");
+
   for (let i = 3; i <= 10; i++) {
     const box = document.createElement("div");
     box.className = "player-box";
     box.textContent = i;
+
     box.onclick = () => {
       document.querySelectorAll(".player-box").forEach(b => b.classList.remove("selected"));
       box.classList.add("selected");
       playerInput.value = i;
-      // update the hint text if present
+
       const hint = document.getElementById("roleHint");
       if (hint) hint.innerHTML = `Select <strong>${i + 3}</strong> roles for this game.`;
     };
+
     playerContainer.appendChild(box);
   }
-  // Default selection
-  const defaultBox = document.querySelector('.player-box:nth-child(4)');
-  if (defaultBox) defaultBox.classList.add('selected');
+
+  const defaultBox = document.querySelector(".player-box:nth-child(4)");
+  if (defaultBox) defaultBox.classList.add("selected");
 });
-const allRoles=[
-"Will","Eleven","Mike","Dustin","Steve","Lucas","Nancy","Jonathan","Joyce",
-"Hopper","Max","V","Billy","Bob","Eddie","Vecna","Mind Flayer","Demogorgon"
+const allRoles = [
+  "Will", "Eleven", "Mike", "Dustin", "Steve", "Lucas",
+  "Nancy", "Jonathan", "Joyce", "Hopper", "Max", "V",
+  "Billy", "Bob", "Eddie", "Vecna", "Mind Flayer", "Demogorgon"
 ];
-const roleGrid=document.getElementById("roleGrid");
-allRoles.forEach(r=>{
-  const div=document.createElement("div");
-  div.className="role"; div.textContent=r;
-  div.onclick=()=>toggleRole(div);
+
+const roleGrid = document.getElementById("roleGrid");
+allRoles.forEach(r => {
+  const div = document.createElement("div");
+  div.className = "role";
+  div.textContent = r;
+  div.onclick = () => toggleRole(div);
   roleGrid.appendChild(div);
 });
 let chimeEnabled = true;
@@ -661,7 +668,7 @@ const phases = [
     "Everyone... wake up.",
     "The night is over.  Discuss what you saw and prepare to vote."
   ]}
-  ];
+];
 
 let voices=[];
 speechSynthesis.onvoiceschanged=()=>voices=speechSynthesis.getVoices();
