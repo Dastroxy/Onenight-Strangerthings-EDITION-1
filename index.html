@@ -411,6 +411,8 @@ body {
   <section id="game" style="display:none;">
   <h2>Night Phase</h2>
   <p id="subtitle">Narrator is preparing...</p>
+<ul id="phaseList"></ul>
+<p id="timer">Discussion Time: 5:00</p>
 
   <div id="voiceControls">
     <h3>Voice Settings</h3>
@@ -783,19 +785,53 @@ function startDiscussionTimer() {
 
   updateTimer();
 }
-async function runNarration(){
+async function runNarration() {
   const list = document.getElementById("phaseList");
+  const subtitle = document.getElementById("subtitle");
   list.innerHTML = "";
+  window.speechSynthesis.cancel(); // stop any previous speech
 
-  // For each phase (role)
+  // loop through all phases
   for (const phase of phases) {
-    // Skip roles not selected (except 'Everyone')
+    // skip unselected roles unless it's 'Everyone'
     if (phase.role !== "Everyone" && !selectedRoles.includes(phase.role)) continue;
 
+    // show the current phase name
     const li = document.createElement("li");
-li.textContent = phase.role;
-list.appendChild(li);
+    li.textContent = phase.role;
+    li.style.color = "#ff4444";
+    list.appendChild(li);
+    subtitle.textContent = `${phase.role} phase...`;
+
+    // speak each line for this role
+    for (const line of phase.lines) {
+      subtitle.textContent = line;
+
+      const utter = new SpeechSynthesisUtterance(line);
+      utter.rate = 0.9;
+      utter.pitch = document.getElementById("villainMode").checked ? 0.5 : 1.0;
+      window.speechSynthesis.speak(utter);
+
+      // wait until speech finishes
+      await new Promise(resolve => (utter.onend = resolve));
+
+      // give players 5 seconds for “action” lines
+      if (/look|choose|swap|inspect/i.test(line)) {
+        await new Promise(r => setTimeout(r, 5000));
+      } else {
+        await new Promise(r => setTimeout(r, 1500));
+      }
+    }
+
+    // fade the current role name before next
+    li.style.opacity = 0.3;
+    await new Promise(r => setTimeout(r, 1000));
   }
+
+  // when all phases are done
+  subtitle.textContent = "Narration complete. Everyone wake up!";
+  startDiscussionTimer();
+}
 // 🔔 play cue before narration starts
 playChime();
 
