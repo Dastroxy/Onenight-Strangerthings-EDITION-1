@@ -383,21 +383,45 @@ body {
 </nav>
 
 <main class="container">
-<section id="setup">
-  <h2>Setup</h2>
-  <label>
-  <input type="checkbox" id="villainMode">
-  Vecna Mode (deeper villain voice)
-</label>
- <label>Number of Players:</label>
-<div id="playerBoxes" class="player-boxes"></div>
-<input id="playerCount" type="hidden" value="6">
-  <p id="roleHint">Select the correct number of roles (players + 3) for this game.</p>
-  <div class="roles" id="roleGrid"></div>
-  <div id="controls">
-    <button id="startBtn" onclick="startGame()">Start Game</button>
-  </div>
-</section>
+
+  <section id="setup">
+    <h2>Setup</h2>
+
+    <label>
+      <input type="checkbox" id="villainMode">
+      Vecna Mode (deeper villain voice)
+    </label>
+
+    <label>Number of Players:</label>
+    <div id="playerBoxes" class="player-boxes"></div>
+    <input id="playerCount" type="hidden" value="6">
+
+    <p id="roleHint">
+      Select the correct number of roles (players + 3) for this game.
+    </p>
+
+    <div class="roles" id="roleGrid"></div>
+
+    <div id="controls">
+      <button id="startBtn" onclick="startGame()">Start Game</button>
+    </div>
+  </section>
+
+  <!-- GAME SECTION -->
+  <section id="game" style="display:none;">
+    <h2>Night Phase</h2>
+    <p id="subtitle">Narrator is preparing...</p>
+
+    <div id="voiceControls">
+      <h3>Voice Settings</h3>
+      <label for="villainModeGame">
+        <input type="checkbox" id="villainModeGame">
+        Vecna Mode (deep voice)
+      </label>
+    </div>
+  </section>
+
+</main>
 
 <h3>Vecna Voice Controls</h3>
 <div id="voiceControls">
