@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One Night: Stranger Things – Local Host</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@1/css/pico.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
+<style>
+  /* === UPSIDE-DOWN THEME ADD-ON === */
+body {
+  background: radial-gradient(circle at 50% 10%, #100000 0%, #000 80%);
+  color: #fff;
+  overflow-x: hidden;
+  animation: introFade 1s ease forwards;
+}
+h1, h2, h3, button {
+  font-family: 'Abril Fatface', serif;
+}
+body, p, input, label {
+  font-family: 'Courier New', monospace;
+}
+h1,h2,h3 {color:#ff0000;text-shadow:0 0 20px #900;}
+/* === BUTTON STYLE === */
+button {
+  background: linear-gradient(145deg, #1a0000, #2b0000);
+  color: #ff4444;
+  border: 1px solid #ff0000;
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.1rem;
+  font-family: 'Abril Fatface', serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255,0,0,0.3);
+}
+
+button:hover {
+  background: #ff0000;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255,0,0,0.6);
+  transform: scale(1.03);
+}
+
+button:active {
+  transform: scale(0.98);
+  box-shadow: 0 0 5px rgba(255,0,0,0.5);
+}
+
+#controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-top: 1rem;
+}
+/* === SLIDERS, DROPDOWNS, AND TOGGLES === */
+
+/* Dropdown (select box) */
+select {
+  background: #0a0000;
+  color: #ff4444;
+  border: 1px solid #ff0000;
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-family: 'Abril Fatface', serif;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255,0,0,0.2);
+}
+select:hover, select:focus {
+  outline: none;
+  background: #ff0000;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255,0,0,0.6);
+}
+
+/* Sliders (range inputs) */
+input[type="range"] {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 8px;
+  background: #200;
+  border-radius: 4px;
+  outline: none;
+  border: 1px solid #ff0000;
+  box-shadow: 0 0 10px rgba(255,0,0,0.2);
+}
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  background: #ff0000;
+  border-radius: 50%;
+  box-shadow: 0 0 15px #f00;
+  transition: all 0.3s ease;
+}
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: #ff6666;
+  transform: scale(1.1);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  background: #ff0000;
+  border-radius: 50%;
+  border: none;
+  box-shadow: 0 0 15px #f00;
+}
+
+/* Checkbox toggle */
+input[type="checkbox"] {
+  accent-color: #ff0000; /* modern browsers */
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+label {
+  color: #ff4444;
+  font-family: 'Abril Fatface', serif;
+}
+
+/* Container for voice and sound settings */
+#voiceControls, #soundSettings {
+  border: 1px solid #400;
+  background: rgba(20, 0, 0, 0.6);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-top: 1rem;
+  box-shadow: 0 0 10px rgba(255,0,0,0.2);
+}
+.role {background:rgba(20,0,0,0.6);border:1px solid #400;transition:0.3s;}
+.role.selected{background:#f00;color:#000;}
+.role.highlight{box-shadow:0 0 20px 5px #f00;}
+nav,footer{background:#080000;}
+
+@keyframes fogDrift {
+  from{background-position:0 0,0 0;}
+  to{background-position:1000px 0,-1000px 0;}
+}
+@keyframes fadeFog {from{opacity:1;}to{opacity:0;}}
+@keyframes introFade {from{opacity:0;}to{opacity:1;}}
+
+/* fog layer */
+#fog {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,0,0,0.15) 0%, transparent 70%),
+    radial-gradient(circle at 80% 70%, rgba(255,0,0,0.15) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(255,0,0,0.1) 0%, transparent 80%);
+  background-size: 1000px 1000px, 1200px 1200px, 1400px 1400px;
+  animation: fogDrift 60s linear infinite, mistPulse 8s ease-in-out infinite;
+  pointer-events: none;   /* ⬅️ this line is critical */
+  z-index: -1;            /* ⬅️ keep the fog *under* everything */
+}
+/* === PLAYER COUNT BOXES === */
+.player-boxes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.5rem 0 1rem;
+  justify-content: center;
+  position: relative;
+  z-index: 10; /* ⬅️ puts boxes above fog */
+}
+.player-box {
+  width: 50px;
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  background: rgba(20,0,0,0.7);
+  color: #ff4444;
+  font-family: 'Abril Fatface', serif;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border: 1px solid #600;
+  transition: all 0.3s ease;
+  box-shadow: 0 0 10px rgba(255,0,0,0.2);
+}
+.player-box:hover {
+  background: rgba(255,0,0,0.2);
+  transform: scale(1.05);
+}
+.player-box.selected {
+  background: #ff0000;
+  color: #000;
+  box-shadow: 0 0 20px rgba(255,0,0,0.6);
+}
+/* === Role selection grid === */
+.roles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+  position: relative;
+  z-index: 10; /* ✅ makes boxes clickable */
+}
+
+.role {
+  background: rgba(20, 0, 0, 0.7);
+  border: 1px solid #600;
+  color: #f44;
+  padding: 1rem;
+  text-align: center;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.role:hover {
+  background: rgba(255, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.role.selected {
+  background: #ff0000;
+  color: #000;
+  box-shadow: 0 0 20px 5px #f00;
+}
+
+.role.highlight {
+  animation: pulseGlow 1.5s infinite alternate;
+}
+
+@keyframes pulseGlow {
+  from { box-shadow: 0 0 5px 2px #f00; }
+  to   { box-shadow: 0 0 25px 8px #f33; }
+}
+#introTitle{
+  position:fixed;
+  top:40%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  font-size:2.5rem;
+  color:#f00;
+  text-shadow:0 0 25px #f00,0 0 10px #900;
+  opacity:0;
+  animation:introTitleFade 6s ease forwards;
+  z-index:5;
+}
+@keyframes introTitleFade {
+  0%{opacity:0;transform:translate(-50%,-50%) scale(1.2);}
+  30%{opacity:1;}
+  80%{opacity:1;}
+  100%{opacity:0;transform:translate(-50%,-60%) scale(1);}
+}
+/* === Responsive layout for phones === */
+@media (max-width: 768px) {
+
+  body {
+    font-size: 0.9rem;
+    padding: 0.5rem;
+  }
+
+  nav ul {
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  h1, h2, h3 {
+    font-size: 1.4rem;
+    text-align: center;
+  }
+
+  .roles {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .role {
+    padding: 0.6rem;
+    font-size: 1rem;
+    min-height: 60px;
+  }
+
+  button {
+    width: 100%;
+    font-size: 1rem;
+    min-height: 50px;
+    margin-top: 0.3rem;
+  }
+
+  #voiceControls,
+  #timer,
+  #subtitle {
+    font-size: 1rem;
+  }
+
+  footer {
+    text-align: center;
+    font-size: 0.8rem;
+  }
+}
+/* === GLOBAL RED BORDER AROUND SCREEN === */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+  box-shadow: inset 0 0 25px 5px rgba(255,0,0,0.4);
+  z-index: 9999;
+}
+
+/* === SCREEN FLICKER EFFECT === */
+@keyframes flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% { opacity: 1; }
+  20%, 24%, 55% { opacity: 0.8; }
+}
+body {
+  animation: flicker 3s infinite;
+}
+
+/* === ROLE BOXES ROUND + SHAKE ON SELECT === */
+.role {
+  border-radius: 10px;
+  transition: transform 0.2s ease, box-shadow 0.3s ease;
+}
+.role.selected {
+  animation: roleShake 0.4s;
+}
+@keyframes roleShake {
+  0% { transform: rotate(0deg); }
+  25% { transform: rotate(1deg); }
+  50% { transform: rotate(-1deg); }
+  75% { transform: rotate(1deg); }
+  100% { transform: rotate(0deg); }
+}
+
+/* === EXTRA FOG & RED MIST PULSE === */
+#fog {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background:
+    radial-gradient(circle at 20% 30%, rgba(255,0,0,0.15) 0%, transparent 70%),
+    radial-gradient(circle at 80% 70%, rgba(255,0,0,0.15) 0%, transparent 70%),
+    radial-gradient(circle at 50% 50%, rgba(255,0,0,0.1) 0%, transparent 80%);
+  background-size: 1000px 1000px, 1200px 1200px, 1400px 1400px;
+  animation: fogDrift 60s linear infinite, mistPulse 8s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+@keyframes mistPulse {
+  0%,100% { opacity: 0.8; filter: brightness(1); }
+  50% { opacity: 1; filter: brightness(1.3); }
+}
+
+/* === INTRO TITLE IN ABRIL FATFACE === */
+#introTitle {
+  font-family: 'Abril Fatface', serif;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 2.5rem;
+  color: #f00;
+  text-shadow: 0 0 25px #f00, 0 0 10px #900;
+  opacity: 0;
+  animation: introTitleFade 6s ease forwards;
+  z-index: 5;
+}
+</style>
+</head>
+<body>
+<div id="fog"></div>
+<div id="introTitle">ONE&nbsp;NIGHT:<br>STRANGER&nbsp;THINGS</div>
+<nav class="container-fluid">
+<ul><li><strong>One Night: Stranger Things</strong></li></ul>
+<ul><li><a href="#">Setup</a></li><li><a href="#">Play</a></li></ul>
+</nav>
+
+<main class="container">
+<section id="setup">
+  <h2>Setup</h2>
+ <label>Number of Players:</label>
+<div id="playerBoxes" class="player-boxes"></div>
+<input id="playerCount" type="hidden" value="6">
+  <p id="roleHint">Select the correct number of roles (players + 3) for this game.</p>
+  <div class="roles" id="roleGrid"></div>
+  <div id="controls">
+    <button id="startBtn" onclick="startGame()">Start Game</button>
+  </div>
+</section>
+
+<h3>Vecna Voice Controls</h3>
+<div id="voiceControls">
+  <label for="pitch">Pitch (Deep ↔ High):</label>
+  <input id="pitch" type="range" min="0.1" max="2" step="0.1" value="0.3">
+  <label for="rate">Rate (Slow ↔ Fast):</label>
+  <input id="rate" type="range" min="0.4" max="1.4" step="0.05" value="0.7">
+</div>
+
+<label for="voiceSelect">Narrator Voice:</label>
+<select id="voiceSelect"></select>
+
+<h3>Sound Settings</h3>
+<label for="chimeToggle">
+  <input type="checkbox" id="chimeToggle" checked>
+  Enable chime before each role
+</label>
+
+<section id="game" style="display:none;">
+  <h2>Night Phase</h2>
+  <p id="subtitle">Press Start to begin narration.</p>
+<p id="timer" style="font-size:1.5rem;color:#ff4444;"></p>
+  <ol id="phaseList"></ol>
+  <div id="controls">
+    <button id="backBtn" onclick="backToSetup()">Back to Setup</button>
+  </div>
+</section>
+</main>
+
+<footer class="container">
+<small>© 2025 Stranger Things Fan Host • Local Edition</small>
+</footer>
+
+<script>
+// === Intro animation ===
+document.addEventListener("DOMContentLoaded",()=>{
+  const fog=document.getElementById("fog");
+  const intro=document.getElementById("introTitle");
+  const setup=document.getElementById("setup");
+  setup.style.opacity="0";
+  setTimeout(()=>{setup.style.transition="opacity 2s";setup.style.opacity="1";},5000);
+  // fade fog away
+  setTimeout(()=>{fog.style.animation="fadeFog 5s forwards";},6000);
+});
+document.addEventListener("DOMContentLoaded",()=>{
+  const pcInput = document.getElementById("playerCount");
+  const hint = document.getElementById("roleHint");
+  pcInput.addEventListener("input",()=>{
+    const n = parseInt(pcInput.value);
+    if(hint) hint.innerHTML = `Select <strong>${n + 3}</strong> roles for this game.`;
+  });
+});
+// === PLAYER COUNT BOXES SETUP ===
+document.addEventListener("DOMContentLoaded", () => {
+  const playerContainer = document.getElementById("playerBoxes");
+  const playerInput = document.getElementById("playerCount");
+  for (let i = 3; i <= 10; i++) {
+    const box = document.createElement("div");
+    box.className = "player-box";
+    box.textContent = i;
+    box.onclick = () => {
+      document.querySelectorAll(".player-box").forEach(b => b.classList.remove("selected"));
+      box.classList.add("selected");
+      playerInput.value = i;
+      // update the hint text if present
+      const hint = document.getElementById("roleHint");
+      if (hint) hint.innerHTML = `Select <strong>${i + 3}</strong> roles for this game.`;
+    };
+    playerContainer.appendChild(box);
+  }
+  // Default selection
+  const defaultBox = document.querySelector('.player-box:nth-child(4)');
+  if (defaultBox) defaultBox.classList.add('selected');
+});
+const allRoles=[
+"Will","Eleven","Mike","Dustin","Steve","Lucas","Nancy","Jonathan","Joyce",
+"Hopper","Max","V","Billy","Bob","Eddie","Vecna","Mind Flayer","Demogorgon"
+];
+const roleGrid=document.getElementById("roleGrid");
+allRoles.forEach(r=>{
+  const div=document.createElement("div");
+  div.className="role"; div.textContent=r;
+  div.onclick=()=>toggleRole(div);
+  roleGrid.appendChild(div);
+});
+let chimeEnabled = true;
+
+// Listen to the checkbox
+document.addEventListener("DOMContentLoaded", () => {
+  const chimeBox = document.getElementById("chimeToggle");
+  if (chimeBox) {
+    chimeBox.addEventListener("change", () => {
+      chimeEnabled = chimeBox.checked;
+    });
+  }
+});
+let selectedRoles=[];
+function toggleRole(el){
+  const role=el.textContent;
+  if(el.classList.contains("selected")){
+    el.classList.remove("selected");
+    selectedRoles=selectedRoles.filter(r=>r!==role);
+  }else if(selectedRoles.length<9){
+    el.classList.add("selected");
+    selectedRoles.push(role);
+  }else{alert("You can only choose 9 roles.");}
+}
+
+function backToSetup(){
+  document.getElementById("game").style.display="none";
+  document.getElementById("setup").style.display="block";
+  document.getElementById("subtitle").textContent="";
+  selectedRoles=[];document.querySelectorAll(".role").forEach(r=>r.classList.remove("selected"));
+}
+
+function startGame(){
+  const playerCount = parseInt(document.getElementById("playerCount").value);
+const requiredRoles = playerCount + 3;
+if (selectedRoles.length !== requiredRoles) {
+  alert(`Select exactly ${requiredRoles} roles for ${playerCount} players.`);
+  return;
+}
+  document.getElementById("setup").style.display="none";
+  document.getElementById("game").style.display="block";
+  runNarration();
+}
+
+const phases = [
+ {role:"Everyone",lines:[
+    "Everyone... close your eyes."
+  ]},
+
+  {role:"Billy",lines:[
+    "Billy... wake up.",
+    "Look at one player's card.",
+    "If you saw Vecna, all players extend your hands so Billy can tap one.",
+    "If you saw the Mind Flayer, look for Vecna.  If Vecna is not in play, look at one center card.",
+    "If you saw the Demogorgon, Vecna and Mind Flayer stick their thumbs out for Billy to see.",
+    "If you saw Will, perform Will’s action.",
+    "If you saw Mike, Eleven puts her thumb up so Billy knows her.",
+    "If you saw Dustin, flip one center card face up.",
+    "If you saw Hopper, reveal one player's card.",
+    "If you saw Steve, swap with another player and look at your new role.",
+    "If you saw Max, switch any two other players’ cards.",
+    "Now Billy, close your eyes."
+  ]},
+
+  {role:"Mind Flayer",lines:[
+    "Mind Flayer... wake up.",
+    "Look for Vecna.  If Vecna is not in play, look at one center card.",
+    "Mind Flayer, close your eyes."
+  ]},
+
+  {role:"Vecna",lines:[
+    "Vecna... wake up.",
+    "All players extend your hands.  Vecna taps one hand.",
+    "Vecna, close your eyes."
+  ]},
+
+  {role:"V",lines:[
+    "V, extend your hand.",
+    "Vecna and Mind Flayer check adjacency and tap your hand if they are next to you.",
+    "V, close your hand and rest."
+  ]},
+
+  {role:"Demogorgon",lines:[
+    "Demogorgon... wake up.",
+    "Vecna and Mind Flayer stick their thumbs out so Demogorgon can see them.",
+    "Demogorgon, close your eyes."
+  ]},
+
+  {role:"Eleven",lines:[
+    "Eleven... wake up.",
+    "All players extend your hands.",
+    "Tap one player's hand.",
+    "Eleven, close your eyes."
+  ]},
+
+  {role:"Mike",lines:[
+    "Mike... wake up.",
+    "Eleven puts her thumb up so Mike can see her.",
+    "Mike, close your eyes."
+  ]},
+
+  {role:"Nancy and Jonathan",lines:[
+    "Nancy and Jonathan... wake up.",
+    "Look at each other so you both know who the other is.",
+    "Nancy and Jonathan, close your eyes."
+  ]},
+
+  {role:"Will",lines:[
+    "Will... wake up.",
+    "Choose ONE: look at one player's card, OR two unused center cards.",
+    "Will, close your eyes."
+  ]},
+
+  {role:"Hopper",lines:[
+    "Hopper... wake up.",
+    "Reveal one player's card.  If that card is Evil, flip it back face down.  Otherwise, leave it revealed.",
+    "Hopper, close your eyes."
+  ]},
+
+  {role:"Dustin",lines:[
+    "Dustin... wake up.",
+    "Flip one center card face up.  It will remain face up.",
+    "Dustin, close your eyes."
+  ]},
+
+  {role:"Max",lines:[
+    "Max... wake up.",
+    "Switch the cards of any two players.",
+    "Max, close your eyes."
+  ]},
+
+  {role:"Steve",lines:[
+    "Steve... wake up.",
+    "Swap your card with another player's card and look at your new role.",
+    "Steve, close your eyes."
+  ]},
+
+  {role:"Joyce",lines:[
+    "Joyce... wake up.",
+    "Check your own role to confirm what you have become.",
+    "Joyce, close your eyes."
+  ]},
+
+  {role:"Everyone",lines:[
+    "Everyone... wake up.",
+    "The night is over.  Discuss what you saw and prepare to vote."
+  ]}
+];
+
+let voices=[];
+speechSynthesis.onvoiceschanged=()=>voices=speechSynthesis.getVoices();
+
+// 🗣️ Populate voice dropdown
+function populateVoiceList() {
+  const select = document.getElementById("voiceSelect");
+  if (!select) return;
+  select.innerHTML = "";
+  voices = speechSynthesis.getVoices();
+
+  voices.forEach((v, i) => {
+    const opt = document.createElement("option");
+    opt.value = v.name;
+    opt.textContent = `${v.name} (${v.lang})`;
+    select.appendChild(opt);
+  });
+
+  // Preselect the first male English voice, if any
+  const defaultVoice = voices.find(v =>
+    v.name.toLowerCase().includes("male") && v.lang.startsWith("en")
+  );
+  if (defaultVoice) select.value = defaultVoice.name;
+}
+speechSynthesis.onvoiceschanged = populateVoiceList;
+document.addEventListener("DOMContentLoaded", populateVoiceList);
+
+function speakLine(text){
+  return new Promise(res=>{
+    const utter = new SpeechSynthesisUtterance(text);
+    const voiceSelect = document.getElementById("voiceSelect");
+const chosen = voices.find(v => v.name === (voiceSelect ? voiceSelect.value : "")) || voices[0];
+utter.voice = chosen;
+
+    // 🔧 read live slider values
+    const pitchControl = document.getElementById("pitch");
+    const rateControl  = document.getElementById("rate");
+    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 0.4;
+    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 0.5;
+
+    utter.volume = 1;
+    utter.lang   = "en-US";
+    utter.onstart = ()=>document.getElementById("subtitle").textContent = text;
+
+    utter.onend = ()=>{
+      const lower = text.toLowerCase();
+      const shouldPause = lower.includes("look at") ||
+                          lower.includes("switch") ||
+                          lower.includes("swap") ||
+                          lower.includes("flip") ||
+                          lower.includes("tap") ||
+                          lower.includes("extend") ||
+                          lower.includes("reveal") ||
+                          lower.includes("choose") ||
+                          lower.includes("perform") ||
+                          lower.includes("check") ||
+                          lower.includes("do") ||
+                          lower.includes("action");
+      if (shouldPause) setTimeout(res,2000); else res();
+    };
+    speechSynthesis.speak(utter);
+  });
+}
+
+// plays a short tone before each role's narration
+function playChime() {
+  if (!chimeEnabled) return; // 🔇 skip sound if toggle is off
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(880, ctx.currentTime);
+    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    osc.stop(ctx.currentTime + 0.6);
+  } catch (e) {
+    console.warn("AudioContext not supported");
+  }
+}
+
+// 5-minute discussion timer
+function startDiscussionTimer() {
+  const timerEl = document.getElementById("timer");
+  let totalSeconds = 5 * 60; // 5 minutes
+
+  function updateTimer() {
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    timerEl.textContent = `Discussion Time: ${mins}:${secs.toString().padStart(2,'0')}`;
+    if (totalSeconds > 0) {
+      totalSeconds--;
+      setTimeout(updateTimer, 1000);
+    } else {
+      timerEl.textContent = "🕒 Time's up! Prepare to vote.";
+      // optional chime when time ends
+      playChime && playChime();
+    }
+  }
+
+  updateTimer();
+}
+
+async function runNarration(){
+  const list = document.getElementById("phaseList");
+  list.innerHTML = "";
+
+  // For each phase (role)
+  for (const phase of phases) {
+    // Skip roles not selected (except 'Everyone')
+    if (phase.role !== "Everyone" && !selectedRoles.includes(phase.role)) continue;
+
+    const li = document.createElement("li");
+li.textContent = phase.role;
+list.appendChild(li);
+
+// 🔔 play cue before narration starts
+playChime();
+
+li.classList.add("highlight");
+
+    for (const line of phase.lines) {
+      // If this is Billy, only speak lines relevant to selected roles
+      if (phase.role === "Billy") {
+        // skip any line mentioning a role not in play
+        const mentionedRole = allRoles.find(r => line.toLowerCase().includes(r.toLowerCase()));
+        if (mentionedRole && !selectedRoles.includes(mentionedRole)) continue;
+      }
+
+      await speakLine(line);
+    }
+
+    li.classList.remove("highlight");
+  }
+
+  document.getElementById("subtitle").textContent =
+    "Narration complete. Everyone wake up.";
+startDiscussionTimer();
+}
+
+</script>
+</body>
+</html>
