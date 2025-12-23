@@ -430,22 +430,32 @@ body {
 <footer class="container">
 <small>© 2025 Stranger Things Fan Host • Local Edition</small>
 </footer>
+  <audio id="ambient" src="sound.mp3" loop preload="auto"></audio>
 
 <script>
-  // --- Ambient sound controls ---
+// --- Ambient sound helpers ---
 function playAmbient() {
   const a = document.getElementById("ambient");
   if (!a) return;
-  a.volume = 0.3;           // adjust volume (0.0 to 1.0)
-  a.play().catch(()=>{});   // play the loop quietly
+  a.volume = 0.3;
+  a.play().catch(err => console.log("play failed:", err));
 }
 
 function stopAmbient() {
   const a = document.getElementById("ambient");
   if (!a) return;
   a.pause();
-  a.currentTime = 0;        // reset to start
+  a.currentTime = 0;
 }
+  // Allow playback after first user click/tap
+window.addEventListener("click", function once() {
+  const a = document.getElementById("ambient");
+  if (a) {
+    a.volume = 0.3;
+    a.play().catch(e => console.log("play failed", e));
+  }
+  window.removeEventListener("click", once);
+});
 // === Intro animation ===
 document.addEventListener("DOMContentLoaded",()=>{
   const fog=document.getElementById("fog");
@@ -794,7 +804,7 @@ li.classList.add("highlight");
     "Narration complete. Everyone wake up.";
 startDiscussionTimer();
 }
-<audio id="ambient" src="ambient.mp3" loop preload="auto"></audio>
+
 </script>
 </body>
 </html>
