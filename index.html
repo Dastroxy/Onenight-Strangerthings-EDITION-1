@@ -383,51 +383,17 @@ body {
 </nav>
 
 <main class="container">
-
-  <section id="setup">
-    <h2>Setup</h2>
-
-    <label>
-      <input type="checkbox" id="villainMode">
-      Vecna Mode (deeper villain voice)
-    </label>
-
-    <label>Number of Players:</label>
-    <div id="playerBoxes" class="player-boxes"></div>
-    <input id="playerCount" type="hidden" value="6">
-
-    <p id="roleHint">
-      Select the correct number of roles (players + 3) for this game.
-    </p>
-
-    <div class="roles" id="roleGrid"></div>
-
-    <div id="controls">
-      <button id="startBtn" onclick="startGame()">Start Game</button>
-    </div>
-  </section>
-
-  <!-- GAME SECTION -->
-  <section id="game" style="display:none;">
-  <h2>Night Phase</h2>
-  <p id="subtitle">Narrator is preparing...</p>
-<ul id="phaseList"></ul>
-<p id="timer">Discussion Time: 5:00</p>
-
-  <div id="voiceControls">
-    <h3>Voice Settings</h3>
-    <label for="villainModeGame">
-      <input type="checkbox" id="villainModeGame">
-      Vecna Mode (deep voice)
-    </label>
-  </div>
-
+<section id="setup">
+  <h2>Setup</h2>
+ <label>Number of Players:</label>
+<div id="playerBoxes" class="player-boxes"></div>
+<input id="playerCount" type="hidden" value="6">
+  <p id="roleHint">Select the correct number of roles (players + 3) for this game.</p>
+  <div class="roles" id="roleGrid"></div>
   <div id="controls">
-    <button id="backBtn" onclick="backToSetup()">Back to Setup</button>
+    <button id="startBtn" onclick="startGame()">Start Game</button>
   </div>
 </section>
-
-</main>
 
 <h3>Vecna Voice Controls</h3>
 <div id="voiceControls">
@@ -448,24 +414,20 @@ body {
 
 <section id="game" style="display:none;">
   <h2>Night Phase</h2>
-  <p id="subtitle">Narrator is preparing...</p>
-
-  <div id="voiceControls"> ... </div>
-
+  <p id="subtitle">Press Start to begin narration.</p>
+<p id="timer" style="font-size:1.5rem;color:#ff4444;"></p>
+  <ol id="phaseList"></ol>
   <div id="controls">
     <button id="backBtn" onclick="backToSetup()">Back to Setup</button>
   </div>
-
-  <p id="timer">Discussion Time: 5:00</p>
 </section>
 </main>
 
 <footer class="container">
-<small>© 2025 DASTROXY'S Stranger Things Fan Host • "V" Edition</small>
+<small>© 2025 Stranger Things Fan Host • Local Edition</small>
 </footer>
-  
+
 <script>
-  alert("Script loaded!");
 // === Intro animation ===
 document.addEventListener("DOMContentLoaded",()=>{
   const fog=document.getElementById("fog");
@@ -484,12 +446,10 @@ document.addEventListener("DOMContentLoaded",()=>{
     if(hint) hint.innerHTML = `Select <strong>${n + 3}</strong> roles for this game.`;
   });
 });
-  
 // === PLAYER COUNT BOXES SETUP ===
 document.addEventListener("DOMContentLoaded", () => {
   const playerContainer = document.getElementById("playerBoxes");
   const playerInput = document.getElementById("playerCount");
-
   for (let i = 3; i <= 10; i++) {
     const box = document.createElement("div");
     box.className = "player-box";
@@ -498,27 +458,26 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".player-box").forEach(b => b.classList.remove("selected"));
       box.classList.add("selected");
       playerInput.value = i;
+      // update the hint text if present
       const hint = document.getElementById("roleHint");
       if (hint) hint.innerHTML = `Select <strong>${i + 3}</strong> roles for this game.`;
     };
     playerContainer.appendChild(box);
   }
-  const defaultBox = document.querySelector(".player-box:nth-child(4)");
-  if (defaultBox) defaultBox.classList.add("selected");
-
-  // --- roles ---
-  const allRoles = [
-    "Will","Eleven","Mike","Dustin","Steve","Lucas","Nancy","Jonathan","Joyce",
-    "Hopper","Max","V","Billy","Bob","Eddie","Vecna","Mind Flayer","Demogorgon"
-  ];
-  const roleGrid = document.getElementById("roleGrid");
-  allRoles.forEach(r => {
-    const div = document.createElement("div");
-    div.className = "role";
-    div.textContent = r;
-    div.onclick = () => toggleRole(div);
-    roleGrid.appendChild(div);
-  });
+  // Default selection
+  const defaultBox = document.querySelector('.player-box:nth-child(4)');
+  if (defaultBox) defaultBox.classList.add('selected');
+});
+const allRoles=[
+"Will","Eleven","Mike","Dustin","Steve","Lucas","Nancy","Jonathan","Joyce",
+"Hopper","Max","V","Billy","Bob","Eddie","Vecna","Mind Flayer","Demogorgon"
+];
+const roleGrid=document.getElementById("roleGrid");
+allRoles.forEach(r=>{
+  const div=document.createElement("div");
+  div.className="role"; div.textContent=r;
+  div.onclick=()=>toggleRole(div);
+  roleGrid.appendChild(div);
 });
 let chimeEnabled = true;
 
@@ -703,17 +662,8 @@ utter.voice = chosen;
     // 🔧 read live slider values
     const pitchControl = document.getElementById("pitch");
     const rateControl  = document.getElementById("rate");
-    const villain = document.getElementById("villainMode")?.checked;
-
-if (villain) {
-  utter.pitch = 0.4;  // lower pitch
-  utter.rate  = 0.7;  // slower
-} else {
-  utter.pitch = 1.0;  // normal human tone
-  utter.rate  = 1.0;
-}
-    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 1.0;
-    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 1.0;
+    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 0.4;
+    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 0.5;
 
     utter.volume = 1;
     utter.lang   = "en-US";
@@ -758,14 +708,7 @@ function playChime() {
   }
 }
 
-function backToSetup() {
-  document.getElementById("game").style.display = "none";
-  document.getElementById("setup").style.display = "block";
-  // Optional: reset subtitle or any narration state
-  document.getElementById("subtitle").textContent = "Narrator is preparing...";
-}
-
-// === 5-minute discussion timer ===
+// 5-minute discussion timer
 function startDiscussionTimer() {
   const timerEl = document.getElementById("timer");
   let totalSeconds = 5 * 60; // 5 minutes
@@ -773,69 +716,33 @@ function startDiscussionTimer() {
   function updateTimer() {
     const mins = Math.floor(totalSeconds / 60);
     const secs = totalSeconds % 60;
-    timerEl.textContent = `Discussion Time: ${mins}:${secs
-      .toString()
-      .padStart(2, "0")}`;
-
+    timerEl.textContent = `Discussion Time: ${mins}:${secs.toString().padStart(2,'0')}`;
     if (totalSeconds > 0) {
       totalSeconds--;
       setTimeout(updateTimer, 1000);
     } else {
       timerEl.textContent = "🕒 Time's up! Prepare to vote.";
-      // Optional: play a sound when the timer ends
-      if (typeof playChime === "function") playChime();
+      // optional chime when time ends
+      playChime && playChime();
     }
   }
 
   updateTimer();
 }
-async function runNarration() {
-  const list = document.getElementById("phaseList");
-  const subtitle = document.getElementById("subtitle");
-  list.innerHTML = "";
-  window.speechSynthesis.cancel(); // stop any previous speech
 
-  // loop through all phases
+async function runNarration(){
+  const list = document.getElementById("phaseList");
+  list.innerHTML = "";
+
+  // For each phase (role)
   for (const phase of phases) {
-    // skip unselected roles unless it's 'Everyone'
+    // Skip roles not selected (except 'Everyone')
     if (phase.role !== "Everyone" && !selectedRoles.includes(phase.role)) continue;
 
-    // show the current phase name
     const li = document.createElement("li");
-    li.textContent = phase.role;
-    li.style.color = "#ff4444";
-    list.appendChild(li);
-    subtitle.textContent = `${phase.role} phase...`;
+li.textContent = phase.role;
+list.appendChild(li);
 
-    // speak each line for this role
-    for (const line of phase.lines) {
-      subtitle.textContent = line;
-
-      const utter = new SpeechSynthesisUtterance(line);
-      utter.rate = 0.9;
-      utter.pitch = document.getElementById("villainMode").checked ? 0.5 : 1.0;
-      window.speechSynthesis.speak(utter);
-
-      // wait until speech finishes
-      await new Promise(resolve => (utter.onend = resolve));
-
-      // give players 5 seconds for “action” lines
-      if (/look|choose|swap|inspect/i.test(line)) {
-        await new Promise(r => setTimeout(r, 5000));
-      } else {
-        await new Promise(r => setTimeout(r, 1500));
-      }
-    }
-
-    // fade the current role name before next
-    li.style.opacity = 0.3;
-    await new Promise(r => setTimeout(r, 1000));
-  }
-
-  // when all phases are done
-  subtitle.textContent = "Narration complete. Everyone wake up!";
-  startDiscussionTimer();
-}
 // 🔔 play cue before narration starts
 playChime();
 
@@ -859,6 +766,7 @@ li.classList.add("highlight");
     "Narration complete. Everyone wake up.";
 startDiscussionTimer();
 }
+
 </script>
 </body>
 </html>
