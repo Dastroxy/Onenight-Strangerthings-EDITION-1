@@ -529,6 +529,7 @@ function backToSetup(){
 }
 
 function startGame(){
+  playAmbient();
   const playerCount = parseInt(document.getElementById("playerCount").value);
 const requiredRoles = playerCount + 3;
 if (selectedRoles.length !== requiredRoles) {
@@ -794,7 +795,7 @@ li.classList.add("highlight");
     "Narration complete. Everyone wake up.";
 startDiscussionTimer();
 }
-
+<audio id="ambient" src="ambient.mp3" loop preload="auto"></audio>
 </script>
 </body>
 </html>
