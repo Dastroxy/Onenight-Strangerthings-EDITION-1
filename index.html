@@ -468,9 +468,12 @@ document.addEventListener("DOMContentLoaded", () => {
   const defaultBox = document.querySelector('.player-box:nth-child(4)');
   if (defaultBox) defaultBox.classList.add('selected');
 });
-const allRoles=[
-"Will","Eleven","Mike","Dustin","Steve","Lucas","Nancy","Jonathan","Joyce",
-"Hopper","Max","V","Billy","Bob","Eddie","Vecna","Mind Flayer","Demogorgon"
+const allRoles = [
+  "Will","Eleven","Mike","Dustin","Steve","Lucas",
+  "Nancy","Jonathan","Joyce","Hopper","Max","V",
+  "Billy","Bob","Eddie","Vecna","Mind Flayer","Demogorgon",
+  // New roles
+  "Robin","Murray","Erika","Kali","Mr. Whatsit"
 ];
 const roleGrid=document.getElementById("roleGrid");
 allRoles.forEach(r=>{
@@ -541,11 +544,16 @@ const phases = [
     "Now Billy, close your eyes."
   ]},
 
-  {role:"Mind Flayer",lines:[
-    "Mind Flayer... wake up.",
-    "Look for Vecna.  If Vecna is not in play, look at one center card.",
-    "Mind Flayer, close your eyes."
-  ]},
+ 
+  // --- Shared phase: Mind Flayer & Mr. Whatsit ---
+  { role: "Mind Flayer & Mr. Whatsit", lines: [
+      "Mind Flayer and Mr. Whatsit... wake up together.",
+      "Vecna, show your thumb.",
+      "If both of you are here, acknowledge one another silently.",
+      "If only one of you is present, you may look at one card from the center.",
+      "Mind Flayer and Mr. Whatsit... close your eyes."
+  ] },
+
 
   {role:"Vecna",lines:[
     "Vecna... wake up.",
@@ -613,6 +621,14 @@ const phases = [
     "Swap your card with another player's card and look at your new role.",
     "Steve, close your eyes."
   ]},
+
+  { role: "Kali", lines: [
+    "Kali... wake up.",
+    "Everyone else, extend one hand forward.",
+    "Kali, reach out and touch one player's hand.",
+    "If the player you touch belongs to the upside down, their vote will be silenced ",
+    "Kali... close your eyes."
+] },
 
   {role:"Joyce",lines:[
     "Joyce... wake up.",
