@@ -574,11 +574,7 @@ const phases = [
     "Now Billy, close your eyes."
   ]},
 
-  // --- Dynamic shared phase: Vecna, Mind Flayer, Mr. Whatsit ---
-{
-  role: "Evil Alliance",
-  lines: [] // we’ll fill these lines in dynamically before narration
-},
+  { role: "Evil Alliance", lines: [] },
 
   {role:"Vecna",lines:[
     "Vecna... wake up.",
@@ -777,8 +773,12 @@ async function runNarration(){
 
   // For each phase (role)
   for (const phase of phases) {
-    // Skip roles not selected (except 'Everyone')
-    if (phase.role !== "Everyone" && !selectedRoles.includes(phase.role)) continue;
+       // Skip roles not selected (except 'Everyone' and the shared Evil Alliance phase)
+    if (
+      phase.role !== "Everyone" &&
+      phase.role !== "Evil Alliance" &&
+      !selectedRoles.includes(phase.role)
+    ) continue;
 
     const li = document.createElement("li");
 li.textContent = phase.role;
