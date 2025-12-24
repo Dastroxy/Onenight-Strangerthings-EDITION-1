@@ -533,10 +533,10 @@ function startGame(){
   evilPhase.lines = []; // clear any old data
 
   if (hasVecna || hasMindFlayer || hasMrWhatsit) {
-    evilPhase.lines.push("Vecna, Mind Flayer, and Mr. Whatsit... wake up together.");
+    evilPhase.lines.push("Mind Flayer, and Mr. Whatsit... wake up together.");
 
     if (hasVecna && hasMindFlayer && hasMrWhatsit) {
-      evilPhase.lines.push("All three are present. Vecna, lift your thumb so Mind Flayer and Mr Whatsit can see you.");
+      evilPhase.lines.push("Vecna, lift your thumb so Mind Flayer and Mr Whatsit can see you.");
     } else if (hasVecna && hasMindFlayer) {
       evilPhase.lines.push("Vecna, lift your thumb so Mind Flayer can see you.");
     } else if (hasMindFlayer && hasMrWhatsit) {
