@@ -8,6 +8,26 @@
 <link href="https://fonts.googleapis.com/css2?family=Abril+Fatface&display=swap" rel="stylesheet">
 <style>
   /* === UPSIDE-DOWN THEME ADD-ON === */
+  .roles-in-play {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  padding: 0.8rem;
+  background: rgba(255, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+  color: #ff4444;
+  font-family: 'Abril Fatface', serif;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+}
+
+.roles-in-play span {
+  background: rgba(255, 0, 0, 0.15);
+  border-radius: 6px;
+  padding: 0.3rem 0.6rem;
+  text-shadow: 0 0 5px #900;
+}
 body {
   background: radial-gradient(circle at 50% 10%, #100000 0%, #000 80%);
   color: #fff;
@@ -413,6 +433,8 @@ body {
 </label>
 
 <section id="game" style="display:none;">
+  <div id="rolesInPlay" class="roles-in-play"></div>
+  <!-- existing content continues below -->
   <h2>Night Phase</h2>
   <p id="subtitle">Press Start to begin narration.</p>
 <p id="timer" style="font-size:1.5rem;color:#ff4444;"></p>
@@ -517,7 +539,7 @@ function backToSetup(){
   selectedRoles=[];document.querySelectorAll(".role").forEach(r=>r.classList.remove("selected"));
 }
 
-function startGame(){
+function startGame() {
   const playerCount = parseInt(document.getElementById("playerCount").value);
   const requiredRoles = playerCount + 3;
   if (selectedRoles.length !== requiredRoles) {
@@ -525,37 +547,43 @@ function startGame(){
     return;
   }
 
-  // Hide setup, show game
   document.getElementById("setup").style.display = "none";
   document.getElementById("game").style.display = "block";
 
-  // === build the dynamic "Evil Alliance" phase before narration ===
-  const hasVecna      = selectedRoles.includes("Vecna");
+  // === Show selected roles on top ===
+  const rolesBar = document.getElementById("rolesInPlay");
+  rolesBar.innerHTML = "";
+  selectedRoles.forEach(role => {
+    const span = document.createElement("span");
+    span.textContent = role;
+    rolesBar.appendChild(span);
+  });
+
+  // === Build Evil Alliance dynamically (your existing code) ===
+  const hasVecna = selectedRoles.includes("Vecna");
   const hasMindFlayer = selectedRoles.includes("Mind Flayer");
-  const hasMrWhatsit  = selectedRoles.includes("Mr. Whatsit");
-
+  const hasMrWhatsit = selectedRoles.includes("Mr. Whatsit");
   const evilPhase = phases.find(p => p.role === "Evil Alliance");
-  evilPhase.lines = []; // clear any old data
-
+  evilPhase.lines = [];
   if (hasVecna || hasMindFlayer || hasMrWhatsit) {
     evilPhase.lines.push("Mind Flayer, and Mr. Whatsit... wake up together.");
-
     if (hasVecna && hasMindFlayer && hasMrWhatsit) {
-      evilPhase.lines.push("Vecna, lift your thumb so Mind Flayer and Mr Whatsit can see you.");
+      evilPhase.lines.push("All three are present. Vecna, lift your thumb so Mind Flayer and Mr Whatsit can see you.");
     } else if (hasVecna && hasMindFlayer) {
-      evilPhase.lines.push("Vecna, lift your thumb so Mind Flayer can see you.");
+      evilPhase.lines.push("Vecna, lift your thumb so Mind Flayer and Mr Whatsit can see you.");
     } else if (hasMindFlayer && hasMrWhatsit) {
       evilPhase.lines.push("Mind Flayer and Mr Whatsit, look at each other silently.");
     } else if (hasMindFlayer && !hasVecna && !hasMrWhatsit) {
-      evilPhase.lines.push("If only one of you is in game, you may look at one card from the center.");
+      evilPhase.lines.push("If only one of you is here, you may look at one card from the center.");
     } else if (hasMrWhatsit && !hasVecna && !hasMindFlayer) {
-      evilPhase.lines.push("If only one of you is in game, you may look at one card from the center.");
+      evilPhase.lines.push("If only one of you is here, you may look at one card from the center.");
+    } else if (hasVecna && !hasMindFlayer && !hasMrWhatsit) {
+      evilPhase.lines.push("Vecna, raise your thumb to the darkness and know you are alone tonight.");
     }
-
     evilPhase.lines.push("Vecna, Mind Flayer, and Mr Whatsit... close your eyes.");
   }
 
-  // === start narration ===
+  // === Start narration ===
   runNarration();
 }
 
