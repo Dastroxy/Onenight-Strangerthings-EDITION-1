@@ -596,7 +596,6 @@ const phases = [
     "Billy... wake up.",
     "Look at one player's card.",
     "If you saw Vecna, all players extend your hands so Billy can tap one.",
-    "If you saw the Mind Flayer, look for Vecna. Vecna stcik your thumbs out for Mind Flayer. If Vecna is not in play, look at one center card.",
     "If you saw the Demogorgon, Vecna, Mr.Whatsit and Mind Flayer stick their thumbs out for Billy to see.",
     "If you saw Will, perform Will’s action.",
     "If you saw Eleven, All players extend your hands. Tap one player's hand.",
@@ -819,10 +818,12 @@ async function runNarration(){
 
     // ✅ Filter lines to remove references to unselected roles
     const activeLines = phase.lines.filter(line => {
-      return !allRoles.some(
-        name => !selectedRoles.includes(name) && line.includes(name)
-      );
-    });
+  // Only skip a line if it explicitly mentions a role that is NOT in play
+  const mentions = allRoles.filter(name => line.includes(name));
+  if (mentions.length === 0) return true; // no roles mentioned, keep it
+  // If all mentioned roles are actually selected, keep it
+  return mentions.every(name => selectedRoles.includes(name));
+});
 
     // Display role on screen
     const li = document.createElement("li");
