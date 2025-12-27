@@ -750,15 +750,21 @@ function speakLine(text) {
         (voices && voices[0]);
       if (chosen) utter.voice = chosen;
 
+      // 🧩 Read live slider values each time
+      const pitchControl = document.getElementById("pitch");
+      const rateControl  = document.getElementById("rate");
       const villainMode = document.getElementById("villainMode")?.checked;
-      utter.pitch = villainMode ? 0.6 : 0.9;
-      utter.rate = villainMode ? 0.85 : 1;
+
+      // If villain mode is on, we lower pitch and slow rate slightly, but sliders still matter
+      const userPitch = pitchControl ? parseFloat(pitchControl.value) : 1.0;
+      const userRate  = rateControl  ? parseFloat(rateControl.value)  : 1.0;
+      utter.pitch = villainMode ? userPitch * 0.8 : userPitch;
+      utter.rate  = villainMode ? userRate * 0.9  : userRate;
       utter.volume = 1;
 
-      // 🔸 Speak the text
       speechSynthesis.speak(utter);
 
-      // 🧩 Pause after "action" lines
+      // 🕒 Pause automatically after “action” lines
       const actionKeywords = [
         "look at",
         "swap",
@@ -781,14 +787,13 @@ function speakLine(text) {
           lower.includes(keyword)
         );
 
-        // Short pause after normal lines, longer after action lines
-        const delay = shouldPause ? 5000 : 1000; // 5s if action, 1s otherwise
+        const delay = shouldPause ? 5000 : 1000; // 5 s for action, 1 s otherwise
         setTimeout(resolve, delay);
       };
 
       utter.onerror = () => resolve();
 
-      // Safety fallback: continue after 15s max
+      // Safety timeout (15 s)
       setTimeout(resolve, 15000);
     } catch (e) {
       console.error("Speech synthesis issue:", e);
