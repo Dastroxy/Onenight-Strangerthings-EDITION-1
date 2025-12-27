@@ -750,10 +750,14 @@ function speakLine(text) {
 
       const villainMode = document.getElementById("villainMode")?.checked;
       utter.pitch = villainMode ? 0.6 : 0.9;
-      utter.rate = villainMode ? 0.85 : 1;
+      utter.rate  = villainMode ? 0.85 : 1;
       utter.volume = 1;
 
-      const timeout = setTimeout(resolve, 15000);
+      const timeout = setTimeout(() => {
+        console.warn("Speech timeout — skipping to next line");
+        resolve();
+      }, 8000);  // ⬅️ 8 seconds safety
+
       utter.onend = () => {
         clearTimeout(timeout);
         resolve();
@@ -766,7 +770,7 @@ function speakLine(text) {
       speechSynthesis.speak(utter);
     } catch (e) {
       console.error("Speech synthesis issue:", e);
-      resolve(); // fail safely
+      resolve();
     }
   });
 }
