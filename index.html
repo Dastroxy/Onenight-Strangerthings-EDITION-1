@@ -809,50 +809,35 @@ async function runNarration(){
   const list = document.getElementById("phaseList");
   list.innerHTML = "";
 
-  // For each phase (role)
   for (const phase of phases) {
-       // Skip roles not selected (except 'Everyone' and the shared Evil Alliance phase)
+    // Skip phases not in play (except Everyone & Evil Alliance)
     if (
       phase.role !== "Everyone" &&
       phase.role !== "Evil Alliance" &&
       !selectedRoles.includes(phase.role)
     ) continue;
-      // Filter out lines that mention roles not in play
-  const activeLines = phase.lines.filter(line => {
-    // list of all known roles (to scan text for)
-    const allNames = allRoles.filter(name => selectedRoles.includes(name));
-    // Keep line only if it doesn't mention an unselected role
-    return !allRoles.some(
-      name => !selectedRoles.includes(name) && line.includes(name)
-    );
-  });
 
+    // ✅ Filter lines to remove references to unselected roles
+    const activeLines = phase.lines.filter(line => {
+      return !allRoles.some(
+        name => !selectedRoles.includes(name) && line.includes(name)
+      );
+    });
+
+    // Display role on screen
     const li = document.createElement("li");
-li.textContent = phase.role;
-list.appendChild(li);
+    li.textContent = phase.role;
+    list.appendChild(li);
 
-// 🔔 play cue before narration starts
-playChime();
-
-li.classList.add("highlight");
-
+    // Narrate each line
     for (const line of activeLines) {
-      // If this is Billy, only speak lines relevant to selected roles
-      if (phase.role === "Billy") {
-        // skip any line mentioning a role not in play
-        const mentionedRole = allRoles.find(r => line.toLowerCase().includes(r.toLowerCase()));
-        if (mentionedRole && !selectedRoles.includes(mentionedRole)) continue;
-      }
-
-      await speakLine(line);
+      document.getElementById("subtitle").textContent = line;
+      await speakLine(line); // your existing function for narration
+      // Pause logic already built in (e.g., 5s for action lines)
     }
-
-    li.classList.remove("highlight");
   }
 
-  document.getElementById("subtitle").textContent =
-    "Narration complete. Everyone wake up.";
-startDiscussionTimer();
+  startDiscussionTimer();
 }
 
 </script>
