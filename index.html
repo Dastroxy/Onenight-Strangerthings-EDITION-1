@@ -770,35 +770,6 @@ function speakLine(text) {
     }
   });
 }
-    // 🔧 read live slider values
-    const pitchControl = document.getElementById("pitch");
-    const rateControl  = document.getElementById("rate");
-    utter.pitch  = pitchControl ? parseFloat(pitchControl.value) : 1.0;
-    utter.rate   = rateControl  ? parseFloat(rateControl.value)  : 1.0;
-
-    utter.volume = 1;
-    utter.lang   = "en-US";
-    utter.onstart = ()=>document.getElementById("subtitle").textContent = text;
-
-    utter.onend = ()=>{
-      const lower = text.toLowerCase();
-      const shouldPause = lower.includes("look at") ||
-                          lower.includes("switch") ||
-                          lower.includes("swap") ||
-                          lower.includes("flip") ||
-                          lower.includes("tap") ||
-                          lower.includes("extend") ||
-                          lower.includes("reveal") ||
-                          lower.includes("choose") ||
-                          lower.includes("perform") ||
-                          lower.includes("check") ||
-                          lower.includes("do") ||
-                          lower.includes("action");
-      if (shouldPause) setTimeout(res,2000); else res();
-    };
-    speechSynthesis.speak(utter);
-  });
-}
 
 // plays a short tone before each role's narration
 function playChime() {
