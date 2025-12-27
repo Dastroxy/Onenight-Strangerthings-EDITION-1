@@ -831,12 +831,14 @@ async function runNarration(){
     ) continue;
 
     // ✅ Filter lines to remove references to unselected roles
-   const activeLines = phase.lines.filter(rawLine => {
+  const activeLines = phase.lines.filter(rawLine => {
+  // Always keep Evil Alliance lines (they’re already built dynamically)
+  if (phase.role === "Evil Alliance") return true;
+
   const text = typeof rawLine === "string" ? rawLine : rawLine.text || "";
-  // Find which role names are mentioned in the line
   const mentions = allRoles.filter(name => text.includes(name));
-  if (mentions.length === 0) return true; // keep lines that don't mention roles
-  // Keep the line only if every mentioned role is actually selected
+
+  if (mentions.length === 0) return true; // line doesn’t mention other roles
   return mentions.every(name => selectedRoles.includes(name));
 });
 
