@@ -568,14 +568,16 @@ const phases = [
     "Billy... wake up.",
     "Look at one player's card.",
     "If you saw Vecna, all players extend your hands so Billy can tap one.",
-    "If you saw the Mind Flayer, look for Vecna.  If Vecna is not in play, look at one center card.",
-    "If you saw the Demogorgon, Vecna and Mind Flayer stick their thumbs out for Billy to see.",
+    "If you saw the Mind Flayer, look for Vecna. Vecna stcik your thumbs out for Mind Flayer. If Vecna is not in play, look at one center card.",
+    "If you saw the Demogorgon, Vecna, Mr.Whatsit and Mind Flayer stick their thumbs out for Billy to see.",
     "If you saw Will, perform Will’s action.",
-    "If you saw Mike, Eleven puts her thumb up so Billy knows her.",
+    "If you saw Eleven, All players extend your hands. Tap one player's hand.",
+    "If you saw Mike, Eleven puts her thumb up so Billy can see her.",
     "If you saw Dustin, flip one center card face up.",
-    "If you saw Hopper, reveal one player's card.",
+    "If you saw Hopper, reveal one player's card, if its an evil card flip it back face down.",
     "If you saw Steve, swap with another player and look at your new role.",
     "If you saw Max, switch any two other players’ cards.",
+    "If you saw Kali, Everyone else, extend one hand forward. Now billy tap one player's hand.",
     "Now Billy, close your eyes."
   ]},
 
@@ -589,7 +591,7 @@ const phases = [
 
   {role:"V",lines:[
     "V, extend your hand.",
-    "Vecna and Mind Flayer check adjacency and tap your hand if they are next to you.",
+    "Evils check adjacency and tap V's hand if you are next to her.",
     "V, close your hand and rest."
   ]},
 
@@ -614,7 +616,8 @@ const phases = [
 
   {role:"Nancy and Jonathan",lines:[
     "Nancy and Jonathan... wake up.",
-    "Look at each other so you both know who the other is.",
+    "If Billy saw Nancy or Jonathan, open your eyes.",
+    "Look at each other so you both know who the other is.", 
     "Nancy and Jonathan, close your eyes."
   ]},
 
@@ -658,8 +661,10 @@ const phases = [
 
   {role:"Joyce",lines:[
     "Joyce... wake up.",
-    "Check your own role to confirm what you have become.",
-    "Joyce, close your eyes."
+    "Check your own role to confirm what you have become.", 
+    "Joyce, close your eyes.",
+    "If Billy saw Joyce, you may check your card as well.",
+    "Billy, close your eyes."
   ]},
 
   {role:"Everyone",lines:[
