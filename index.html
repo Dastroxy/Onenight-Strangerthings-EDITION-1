@@ -831,11 +831,12 @@ async function runNarration(){
     ) continue;
 
     // ✅ Filter lines to remove references to unselected roles
-    const activeLines = phase.lines.filter(line => {
-  // Only skip a line if it explicitly mentions a role that is NOT in play
-  const mentions = allRoles.filter(name => line.includes(name));
-  if (mentions.length === 0) return true; // no roles mentioned, keep it
-  // If all mentioned roles are actually selected, keep it
+   const activeLines = phase.lines.filter(rawLine => {
+  const text = typeof rawLine === "string" ? rawLine : rawLine.text || "";
+  // Find which role names are mentioned in the line
+  const mentions = allRoles.filter(name => text.includes(name));
+  if (mentions.length === 0) return true; // keep lines that don't mention roles
+  // Keep the line only if every mentioned role is actually selected
   return mentions.every(name => selectedRoles.includes(name));
 });
 
