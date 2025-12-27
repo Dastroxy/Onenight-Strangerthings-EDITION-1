@@ -752,24 +752,44 @@ function speakLine(text) {
 
       const villainMode = document.getElementById("villainMode")?.checked;
       utter.pitch = villainMode ? 0.6 : 0.9;
-      utter.rate  = villainMode ? 0.85 : 1;
+      utter.rate = villainMode ? 0.85 : 1;
       utter.volume = 1;
 
-      const timeout = setTimeout(() => {
-        console.warn("Speech timeout — skipping to next line");
-        resolve();
-      }, 8000);  // ⬅️ 8 seconds safety
+      // 🔸 Speak the text
+      speechSynthesis.speak(utter);
+
+      // 🧩 Pause after "action" lines
+      const actionKeywords = [
+        "look at",
+        "swap",
+        "switch",
+        "tap",
+        "reveal",
+        "choose",
+        "extend",
+        "perform",
+        "check",
+        "flip",
+        "point",
+        "touch",
+        "pick"
+      ];
 
       utter.onend = () => {
-        clearTimeout(timeout);
-        resolve();
-      };
-      utter.onerror = () => {
-        clearTimeout(timeout);
-        resolve();
+        const lower = text.toLowerCase();
+        const shouldPause = actionKeywords.some(keyword =>
+          lower.includes(keyword)
+        );
+
+        // Short pause after normal lines, longer after action lines
+        const delay = shouldPause ? 5000 : 1000; // 5s if action, 1s otherwise
+        setTimeout(resolve, delay);
       };
 
-      speechSynthesis.speak(utter);
+      utter.onerror = () => resolve();
+
+      // Safety fallback: continue after 15s max
+      setTimeout(resolve, 15000);
     } catch (e) {
       console.error("Speech synthesis issue:", e);
       resolve();
