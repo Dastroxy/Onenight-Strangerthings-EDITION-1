@@ -494,15 +494,20 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 });
 let selectedRoles=[];
-function toggleRole(el){
-  const role=el.textContent;
-  if(el.classList.contains("selected")){
+function toggleRole(el) {
+  const role = el.textContent;
+  const playerCount = parseInt(document.getElementById("playerCount").value);
+  const limit = playerCount + 3;
+
+  if (el.classList.contains("selected")) {
     el.classList.remove("selected");
-    selectedRoles=selectedRoles.filter(r=>r!==role);
-  }else if(selectedRoles.length<9){
+    selectedRoles = selectedRoles.filter(r => r !== role);
+  } else if (selectedRoles.length < limit) {
     el.classList.add("selected");
     selectedRoles.push(role);
-  }else{alert("You can only choose 9 roles.");}
+  } else {
+    alert(`You can only choose ${limit} roles for ${playerCount} players.`);
+  }
 }
 
 function backToSetup(){
