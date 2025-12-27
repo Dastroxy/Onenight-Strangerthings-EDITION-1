@@ -733,12 +733,54 @@ function populateVoiceList() {
 speechSynthesis.onvoiceschanged = populateVoiceList;
 document.addEventListener("DOMContentLoaded", populateVoiceList);
 
-function speakLine(text){
-  return new Promise(res=>{
+function speakLine(text) {
+  return new Promise(res => {
+    // 🧩 If no text provided, resolve immediately (prevents hanging)
+    if (!text || text.trim() === "") {
+      res();
+      return;
+    }
+
     const utter = new SpeechSynthesisUtterance(text);
+
+    // 🧩 Apply the selected voice (keeps your dropdown working)
     const voiceSelect = document.getElementById("voiceSelect");
-const chosen = voices.find(v => v.name === (voiceSelect ? voiceSelect.value : "")) || voices[0];
-utter.voice = chosen;
+    const chosen =
+      voices.find(v => v.name === (voiceSelect ? voiceSelect.value : "")) ||
+      voices[0];
+    utter.voice = chosen;
+
+    // 🧩 Optional: adjust pitch/rate if you want the “Vecna” feel
+    utter.pitch = 0.8;
+    utter.rate = 0.95;
+    utter.volume = 1;
+
+    // 🧩 Safety timeout: auto-resolve even if speech never ends
+    const timeout = setTimeout(() => {
+      console.warn("Speech timeout — skipping to next line");
+      res();
+    }, 15000); // 15 seconds
+
+    utter.onend = () => {
+      clearTimeout(timeout);
+      res();
+    };
+
+    utter.onerror = e => {
+      console.error("Speech error:", e);
+      clearTimeout(timeout);
+      res();
+    };
+
+    // 🧩 Speak line
+    try {
+      speechSynthesis.speak(utter);
+    } catch (err) {
+      console.error("Speech synthesis failed:", err);
+      res();
+    }
+  });
+}
 
     // 🔧 read live slider values
     const pitchControl = document.getElementById("pitch");
