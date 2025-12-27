@@ -580,7 +580,7 @@ function startGame() {
     } else if (hasVecna && !hasMindFlayer && !hasMrWhatsit) {
       evilPhase.lines.push("Vecna, raise your thumb to the darkness and know you are alone tonight.");
     }
-    evilPhase.lines.push("Vecna, Mind Flayer, and Mr Whatsit... close your eyes.");
+    evilPhase.lines.push("Mind Flayer, and Mr Whatsit... close your eyes.");
   }
 
   console.log("Evil Alliance lines:", evilPhase.lines);
@@ -838,10 +838,12 @@ async function runNarration(){
   const text = typeof rawLine === "string" ? rawLine : rawLine.text || "";
   const mentions = allRoles.filter(name => text.includes(name));
 
-  if (mentions.length === 0) return true; // line doesn’t mention other roles
-  return mentions.every(name => selectedRoles.includes(name));
-});
+  // If no roles mentioned, keep line
+  if (mentions.length === 0) return true;
 
+  // 🔧 New rule: keep line if AT LEAST one mentioned role is in play
+  return mentions.some(name => selectedRoles.includes(name));
+});
     // Display role on screen
     const li = document.createElement("li");
     li.textContent = phase.role;
