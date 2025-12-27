@@ -817,6 +817,15 @@ async function runNarration(){
       phase.role !== "Evil Alliance" &&
       !selectedRoles.includes(phase.role)
     ) continue;
+      // Filter out lines that mention roles not in play
+  const activeLines = phase.lines.filter(line => {
+    // list of all known roles (to scan text for)
+    const allNames = allRoles.filter(name => selectedRoles.includes(name));
+    // Keep line only if it doesn't mention an unselected role
+    return !allRoles.some(
+      name => !selectedRoles.includes(name) && line.includes(name)
+    );
+  });
 
     const li = document.createElement("li");
 li.textContent = phase.role;
@@ -827,7 +836,7 @@ playChime();
 
 li.classList.add("highlight");
 
-    for (const line of phase.lines) {
+    for (const line of activeLines) {
       // If this is Billy, only speak lines relevant to selected roles
       if (phase.role === "Billy") {
         // skip any line mentioning a role not in play
