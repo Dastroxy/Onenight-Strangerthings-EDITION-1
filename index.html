@@ -622,11 +622,18 @@ const phases = [
     "V, close your hand and rest."
   ]},
 
-  {role:"Demogorgon",lines:[
-    "Demogorgon... wake up.",
-    "Vecna, Mr.Whatsit and Mind Flayer stick their thumbs out so Demogorgon can see them.",
-    "Demogorgon, close your eyes."
-  ]},
+  {
+  role: "Demogorgon",
+  lines: [
+    { text: "Demogorgon... wake up." },
+    {
+      text: "Vecna, Mr. Whatsit and Mind Flayer, stick your thumbs out for Demogorgon.",
+      condition: () =>
+        ["Vecna", "Mr. Whatsit", "Mind Flayer"].some(r => selectedRoles.includes(r))
+    },
+    { text: "Demogorgon... close your eyes." }
+  ]
+},
 
   {role:"Eleven",lines:[
     "Eleven... wake up.",
@@ -831,11 +838,20 @@ async function runNarration(){
     list.appendChild(li);
 
     // Narrate each line
-    for (const line of activeLines) {
-      document.getElementById("subtitle").textContent = line;
-      await speakLine(line); // your existing function for narration
-      // Pause logic already built in (e.g., 5s for action lines)
-    }
+    for (const rawLine of activeLines) {
+  // Support both plain strings and conditional objects
+  const lineText = typeof rawLine === "string" ? rawLine : rawLine.text;
+  const ok = typeof rawLine.condition === "function" ? rawLine.condition() : true;
+
+  // Skip this line if its condition isn't met
+  if (!ok) continue;
+
+  // Show the line on screen
+  document.getElementById("subtitle").textContent = lineText;
+
+  // Speak the line using your existing speech synthesis
+  await speakLine(lineText);
+}
   }
 
   startDiscussionTimer();
